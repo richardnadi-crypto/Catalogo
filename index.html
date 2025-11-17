@@ -255,6 +255,7 @@
 
       const price=document.createElement('div'); price.className='price';
       const usd=document.createElement('div'); usd.className='usd';
+      // Esta es la línea que arreglé en la sintaxis
       usd.textContent = p.precioUsd ? `Precio: ${money(p.precioUsd)}` : 'Precio: N/D';
       price.appendChild(usd);
 
@@ -264,7 +265,7 @@
         cart.push({
           nombre:p.nombre||'Producto',
           marca:p.marca||'',
-          precio:p.precioUsd||'',
+          precio:p.precioUsd||'', // Aquí también usa p.precioUsd
           imagen:p.imagenUrl||'',
           categoria:p.categoria||'',
           subcategoria:p.subcategoria||''
@@ -367,6 +368,13 @@
 
         productos = rows.slice(1).map(r=>{
           const get = name => r[idxMap[name]] ?? '';
+          
+          // ==========================================================
+          // AQUÍ ESTÁ LA CORRECCIÓN PARA EL PRECIO
+          // Intenta obtener el precio de 'precio usd' O 'precio'.
+          const precio = get('precio usd') || get('precio');
+          // ==========================================================
+
           return {
             nombre:get('nombre'),
             marca:get('marca'),
@@ -374,7 +382,7 @@
             subcategoria:get('subcategoria'),
             descripcion:get('descripcion'),
             beneficios:get('beneficios'),
-            precioUsd:get('precio usd'),
+            precioUsd: precio, // <-- Se usa la variable 'precio'
             imagenUrl:get('imagen url')
           };
         }).filter(p => p.nombre); // Filtra filas vacías
