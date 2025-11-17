@@ -1,414 +1,164 @@
-
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <title>Catálogo Naturalisima</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    /* Estilos adaptados del segundo archivo para funcionar con el primer archivo */
-    body { font-family: Arial, sans-serif; margin:0; padding:20px; background:#f5fbf4; color: #333; }
-    h1, h2 { text-align:center; color:#2e7d32; }
-    header { border-bottom: 2px solid #e0e0e0; margin-bottom: 20px; }
-    header h1 { margin: 0; padding: 10px 0; }
-    
-    .controls { text-align:center; margin-bottom:20px; display:flex; flex-wrap:wrap; justify-content:center; gap:10px; }
+    body { font-family: Arial, sans-serif; margin:0; padding:20px; background:#f5fbf4; }
+    h1 { text-align:center; color:#2e7d32; }
+    .controls { text-align:center; margin-bottom:20px; }
     .controls input, .controls select {
-      padding:10px; border:1px solid #ccc; border-radius:6px;
-      font-size: 1em;
+      margin:10px; padding:10px; border:1px solid #ccc; border-radius:6px;
     }
-    .controls input { flex: 1; min-width: 250px; }
-
-    /* Layout principal */
-    .layout {
-      display: flex;
-      flex-direction: column; /* Apilado en móvil */
-      gap: 20px;
-    }
-
-    /* Sección de catálogo (Grid) */
-    .grid {
-      display:flex; flex-wrap:wrap; justify-content:center; gap:16px;
-      margin-bottom: 20px;
-    }
-    
-    /* Tarjeta de producto (reemplaza a .producto) */
-    .card {
+    .grid { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; }
+    .producto {
       background:#fff; border:1px solid #ddd; border-radius:8px;
       width:260px; padding:12px; box-shadow:0 4px 10px rgba(0,0,0,0.08);
       display:flex; flex-direction:column;
     }
-    .card .thumb img {
-      width:100%; height:160px; object-fit:cover; border-radius:6px; margin-bottom:8px;
-    }
-    .card .content { flex: 1; display: flex; flex-direction: column; }
-    .card .title { font-size:1.1em; color:#2e7d32; font-weight: bold; }
-    .card .meta { font-size: 0.8em; color: #777; margin: 4px 0; }
-    .card .desc, .card .benef { font-size: 0.9em; margin: 6px 0; }
-    
-    .card .price { margin-top: auto; padding-top: 10px; }
-    .card .price .usd { color:#e74c3c; font-weight:bold; margin-top:6px; font-size: 1.2em; }
-    
-    /* Botones */
-    .btn, .cart-btn {
-      margin-top:10px; padding:10px; background:#27ae60; color:#fff;
-      border:none; border-radius:6px; cursor:pointer; font-weight:bold;
-      width: 100%; text-align: center;
-    }
-    .btn:hover, .cart-btn:hover { background:#219150; }
-    
-    .cart-btn.remove { background:#c0392b !important; }
-    .cart-btn.remove:hover { background:#a93226; }
-
-    /* Paginación */
+    .producto img { width:100%; height:160px; object-fit:cover; border-radius:6px; margin-bottom:8px; }
+    .producto strong { font-size:1.1em; color:#2e7d32; }
+    .precio { color:#e74c3c; font-weight:bold; margin-top:6px; }
+    .btn { margin-top:10px; padding:8px; background:#27ae60; color:#fff; border:none; border-radius:6px; cursor:pointer; font-weight:bold; }
+    .btn:hover { background:#219150; }
     .paginacion { text-align:center; margin-top:20px; }
     .paginacion button { margin:0 5px; padding:8px 12px; border-radius:6px; border:1px solid #ccc; cursor:pointer; }
     .paginacion button:disabled { opacity:0.5; cursor:not-allowed; }
-    .paginacion .pageinfo { display: inline-block; margin: 0 10px; }
-
-    /* Carrito (reemplaza a #carrito) */
-    .cart {
-      background:#fff; border:1px solid #ccc; border-radius:8px;
-      padding:16px; box-shadow:0 4px 10px rgba(0,0,0,0.08);
-    }
-    .cart-empty { text-align: center; color: #777; }
-    .cart-list { list-style:none; padding:0; margin:0; }
-    .cart-item {
-      margin-bottom:8px; font-size:0.9em;
-      display:flex; justify-content:space-between; align-items: center;
-      padding-bottom: 8px; border-bottom: 1px solid #f0f0f0;
-    }
-    .cart-item-title { font-weight: bold; }
-    .cart-item-meta { font-size: 0.9em; color: #777; }
-    
-    .cart-item .cart-btn.remove {
-        width: auto; padding: 5px 10px; margin: 0;
-    }
-
-    .cart-total { font-weight:bold; margin-top:10px; display: flex; justify-content: space-between; font-size: 1.2em; }
-    .cart-actions { margin-top: 10px; display: flex; gap: 10px; }
-    
-    .status {
-      text-align: center; padding: 40px; font-size: 1.2em; color: #555;
-    }
-
-    /* Media query para pantallas más grandes */
-    @media (min-width: 900px) {
-      .layout {
-        flex-direction: row; /* Lado a lado en escritorio */
-      }
-      section {
-        flex: 3; /* El catálogo toma más espacio */
-      }
-      .cart {
-        flex: 1; /* El carrito toma menos espacio */
-        max-width: 400px;
-        position: sticky; /* Carrito fijo al hacer scroll */
-        top: 20px;
-        align-self: flex-start; /* Se alinea arriba */
-      }
-    }
+    #mostrarCarrito { display:block; margin:30px auto 10px; padding:10px 20px; background:#2e7d32; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer; }
+    #mostrarCarrito:hover { background:#1e5e24; }
+    #carrito { display:none; background:#fff; border:1px solid #ccc; border-radius:8px; padding:16px; max-width:600px; margin:20px auto; box-shadow:0 4px 10px rgba(0,0,0,0.08); }
+    #carrito h2 { margin-top:0; color:#2e7d32; }
+    #carrito ul { list-style:none; padding:0; margin:0; }
+    #carrito li { margin-bottom:8px; font-size:0.9em; display:flex; justify-content:space-between; }
+    #carrito .total { font-weight:bold; margin-top:10px; }
+    #carrito button { margin-top:10px; width:100%; padding:10px; background:#27ae60; color:#fff; border:none; border-radius:6px; cursor:pointer; font-weight:bold; }
+    #carrito button:hover { background:#219150; }
+    .remove { background:#c0392b !important; }
   </style>
 </head>
 <body>
+  <h1>Catálogo Naturalisima</h1>
+  <div class="controls">
+    <input id="busqueda" type="text" placeholder="Buscar producto...">
+    <select id="categoria"><option value="">Todas las categorías</option></select>
+    <select id="pagesize">
+      <option value="12">12 por página</option>
+      <option value="24">24 por página</option>
+      <option value="36">36 por página</option>
+    </select>
+  </div>
+  <div id="catalogo" class="grid"></div>
+  <div class="paginacion">
+    <button id="prev">Anterior</button>
+    <span id="pagina"></span>
+    <button id="next">Siguiente</button>
+  </div>
 
-  <header>
-    <div class="brand">
-      <h1>Catálogo Naturalisima</h1>
-    </div>
-  </header>
+  <button id="mostrarCarrito">🛒 Ver carrito (<span id="contador">0</span>)</button>
 
-  <main>
-    <div class="controls">
-      <input id="busqueda" type="text" placeholder="Buscar por nombre, marca, categoría, descripción o beneficios..." />
-      <select id="categoria"><option value="">Todas las categorías</option></select>
-      <select id="pagesize">
-        <option value="12">12 por página</option>
-        <option value="24">24 por página</option>
-        <option value="36">36 por página</option>
-      </select>
-    </div>
-
-    <div class="layout">
-      <section>
-        <div id="estado" class="status">Cargando productos...</div>
-        <div id="catalogo" class="grid" aria-live="polite"></div>
-        <div class="paginacion">
-          <button id="prev">Anterior</button>
-          <span id="pageinfo" class="pageinfo"></span>
-          <button id="next">Siguiente</button>
-        </div>
-      </section>
-
-      <aside class="cart">
-        <h2>Carrito</h2>
-        <div id="cartEmpty" class="cart-empty">Tu carrito está vacío.</div>
-        <ul id="cartList" class="cart-list"></ul>
-        <div class="cart-total">
-          <span>Total</span>
-          <span id="cartTotal">$0.00</span>
-        </div>
-        <div class="cart-actions">
-          <button id="clearCart" class="cart-btn remove">Vaciar</button>
-          <button id="checkout" class="cart-btn checkout">Finalizar compra</button>
-        </div>
-      </aside>
-    </div>
-  </main>
+  <div id="carrito">
+    <h2>Carrito</h2>
+    <ul id="listaCarrito"></ul>
+    <div class="total">Total: <span id="total">$0.00</span></div>
+    <button id="finalizar">Finalizar compra</button>
+    <button id="vaciar" class="remove">Vaciar carrito</button>
+  </div>
 
   <script>
-    // URL CSV definitivo
     const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8d5wwRUWXBNcyzAuL0HyrWtMPMjGK-SZH4rBNgIPQpHopFpYkU-g2VHSOwxrulKG-1WoU_mruEF7T/pub?gid=272677879&single=true&output=csv';
-    // WhatsApp destino (Venezuela)
-    const WHATSAPP_BASE = 'https://wa.me/584143572264?text=';
+    const WHATSAPP = 'https://wa.me/584143572264?text=';
 
-    // Parseador CSV robusto (respeta comillas y comas dentro de campos)
-    function parseCSV(text){
-      const rows=[]; let cur=[]; let val=''; let inQ=false;
-      for(let i=0;i<text.length;i++){
-        const c=text[i], n=text[i+1];
-        if(inQ){
-          if(c==='"' && n==='"'){val+='"'; i++}
-          else if(c==='"'){inQ=false}
-          else{val+=c}
-        }else{
-          if(c==='"'){inQ=true}
-          else if(c===','){cur.push(val); val=''}
-          else if(c==='\r'){/*ignore*/}
-          else if(c==='\n'){cur.push(val); rows.push(cur); cur=[]; val=''}
-          else{val+=c}
-        }
-      }
-      if(val.length>0 || cur.length>0){cur.push(val); rows.push(cur)}
-      return rows;
+    let productos = [];
+    let paginaActual = 1;
+    let productosPorPagina = 12;
+    let carrito = [];
+
+    async function cargarProductos() {
+      const res = await fetch(SHEET_CSV_URL);
+      const texto = await res.text();
+      const lineas = texto.trim().split('\n');
+      productos = lineas.slice(1).map(l => {
+        const campos = l.split(',');
+        return {
+          nombre: campos[0],
+          marca: campos[1],
+          categoria: campos[2],
+          subcategoria: campos[3],
+          descripcion: campos[4],
+          beneficios: campos[5],
+          precio: campos[6],
+          imagen: campos[7]
+        };
+      });
+      poblarCategorias();
+      mostrarPagina(productos);
+      document.getElementById('busqueda').addEventListener('input', filtrar);
+      document.getElementById('categoria').addEventListener('change', filtrar);
+      document.getElementById('pagesize').addEventListener('change', e => {
+        productosPorPagina = parseInt(e.target.value);
+        paginaActual = 1;
+        mostrarPagina(productos);
+      });
+      document.getElementById('prev').addEventListener('click', () => cambiarPagina(-1));
+      document.getElementById('next').addEventListener('click', () => cambiarPagina(1));
+      document.getElementById('mostrarCarrito').addEventListener('click', () => {
+        document.getElementById('carrito').style.display = 'block';
+      });
+      document.getElementById('finalizar').addEventListener('click', finalizarCompra);
+      document.getElementById('vaciar').addEventListener('click', () => {
+        carrito = [];
+        renderCarrito();
+      });
     }
 
-    // Normaliza encabezados
-    function norm(s){
-      return String(s||'').trim().toLowerCase()
-        .replace(/[áàä]/g,'a').replace(/[éèë]/g,'e').replace(/[íìï]/g,'i')
-        .replace(/[óòö]/g,'o').replace(/[úùü]/g,'u').replace(/[^a-z0-9 ]/g,'')
-        .replace(/\s+/g,' ');
+    function poblarCategorias() {
+      const cats = [...new Set(productos.map(p => p.categoria).filter(Boolean))];
+      const select = document.getElementById('categoria');
+      cats.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        select.appendChild(opt);
+      });
     }
 
-    const expected = [
-      'nombre','marca','categoria','subcategoria','descripcion','beneficios','precio usd','imagen url'
-    ];
+    function mostrarPagina(lista) {
+      const contenedor = document.getElementById('catalogo');
+      contenedor.innerHTML = '';
+      const inicio = (paginaActual - 1) * productosPorPagina;
+      const fin = inicio + productosPorPagina;
+      const paginaProductos = lista.slice(inicio, fin);
 
-    let productos=[]; let filtrados=[];
-    let paginaActual=1; let porPagina=12;
-
-    const elCatalogo=document.getElementById('catalogo');
-    const elEstado=document.getElementById('estado');
-    const elBusqueda=document.getElementById('busqueda');
-    const elCategoria=document.getElementById('categoria');
-    const elPageSize=document.getElementById('pagesize');
-    const elPrev=document.getElementById('prev');
-    const elNext=document.getElementById('next');
-    const elPageInfo=document.getElementById('pageinfo');
-
-    // Carrito
-    const elCartEmpty=document.getElementById('cartEmpty');
-    const elCartList=document.getElementById('cartList');
-    const elCartTotal=document.getElementById('cartTotal');
-    const elClearCart=document.getElementById('clearCart');
-    const elCheckout=document.getElementById('checkout');
-    let cart = [];
-
-    // Persistencia
-    function loadCart(){
-      try{
-        const saved = JSON.parse(localStorage.getItem('naturalisima_cart')||'[]');
-        if(Array.isArray(saved)) cart = saved;
-      }catch(e){}
-      renderCart();
-    }
-    function saveCart(){ localStorage.setItem('naturalisima_cart', JSON.stringify(cart)); }
-
-    // Utils
-    const PLACEHOLDER='data:image/svg+xml;utf8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240"><defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#e8f5e9"/><stop offset="100%" stop-color="#f1fbf2"/></linearGradient></defs><rect width="320" height="240" fill="url(#g)"/><g fill="#2e7d32" opacity="0.28"><path d="M160 60c40 30 60 60 60 90a60 60 0 1 1-120 0c0-30 20-60 60-90z"/><circle cx="160" cy="150" r="34" fill="#a5d6a7"/></g></svg>`);
-    function money(x){
-      const n = Number(String(x).replace(/[^0-9.\-]/g,''));
-      return isNaN(n) ? '' : '$'+n.toFixed(2);
-    }
-
-    function buildCard(p){
-      const card=document.createElement('div'); card.className='card';
-      const thumb=document.createElement('div'); thumb.className='thumb';
-      const img=document.createElement('img'); img.loading='lazy';
-      img.alt=p.nombre?`Imagen de ${p.nombre}`:'Imagen de producto';
-      img.src=p.imagenUrl||PLACEHOLDER;
-      img.onerror = () => { img.src = PLACEHOLDER; }; // Fallback si la URL falla
-      thumb.appendChild(img);
-
-      const content=document.createElement('div'); content.className='content';
-      const title=document.createElement('div'); title.className='title'; title.textContent=p.nombre||'Producto';
-      const meta=document.createElement('div'); meta.className='meta';
-      meta.textContent=[
-        p.marca?`Marca: ${p.marca}`:null,
-        p.categoria?`Categoría: ${p.categoria}`:null,
-        p.subcategoria?`Subcategoría: ${p.subcategoria}`:null
-      ].filter(Boolean).join(' · ');
-      content.appendChild(title); content.appendChild(meta);
-
-      if(p.descripcion){const d=document.createElement('div'); d.className='desc'; d.textContent=p.descripcion; content.appendChild(d);}
-      if(p.beneficios){const b=document.createElement('div'); b.className='benef'; b.textContent=`Beneficios: ${p.beneficios}`; content.appendChild(b);}
-
-      const price=document.createElement('div'); price.className='price';
-      const usd=document.createElement('div'); usd.className='usd'; usd.textContent=p.precioUsd?`${money(p.precioUsd)}`:'Precio: N/D';
-      price.appendChild(usd);
-
-      const actions=document.createElement('div'); actions.className='actions';
-      const add=document.createElement('button'); add.className='btn'; add.textContent='Agregar al carrito';
-      add.addEventListener('click', ()=>{
-        cart.push({
-          nombre:p.nombre||'Producto',
-          marca:p.marca||'',
-          precio:p.precioUsd||'',
-          imagen:p.imagenUrl||'',
-          categoria:p.categoria||'',
-          subcategoria:p.subcategoria||''
+      paginaProductos.forEach(p => {
+        const producto = document.createElement('div');
+        producto.className = 'producto';
+        producto.innerHTML = `
+          <img src="${p.imagen || ''}" alt="${p.nombre}">
+          <strong>${p.nombre}</strong>
+          Marca: ${p.marca}<br>
+          Categoría: ${p.categoria}<br>
+          Subcategoría: ${p.subcategoria}<br>
+          Descripción: ${p.descripcion}<br>
+          Beneficios: ${p.beneficios}<br>
+          <div class="precio">Precio: $${p.precio}</div>
+          <button class="btn">Agregar al carrito</button>
+        `;
+        producto.querySelector('.btn').addEventListener('click', () => {
+          carrito.push(p);
+          renderCarrito();
         });
-        saveCart(); renderCart();
+        contenedor.appendChild(producto);
       });
-      actions.appendChild(add);
 
-      content.appendChild(price);
-      content.appendChild(actions);
-
-      card.appendChild(thumb); card.appendChild(content);
-      return card;
+      document.getElementById('pagina').textContent = `Página ${paginaActual} de ${Math.ceil(lista.length / productosPorPagina)}`;
     }
 
-    function render(list){
-      elCatalogo.innerHTML='';
-      if(!list.length){
-        elEstado.textContent='No hay resultados para los filtros/búsqueda actuales.';
-        elEstado.style.display='block';
-        elPageInfo.textContent='';
-        elPrev.disabled=true; elNext.disabled=true;
-        return;
-      }else{ elEstado.style.display='none'; }
-
-      const total=list.length;
-      const totalPag=Math.ceil(total/porPagina);
-      paginaActual=Math.max(1,Math.min(paginaActual,totalPag));
-      const inicio=(paginaActual-1)*porPagina, fin=inicio+porPagina;
-      const pageItems=list.slice(inicio,fin);
-      for(const p of pageItems){ elCatalogo.appendChild(buildCard(p)); }
-
-      elPageInfo.textContent=`Página ${paginaActual} de ${totalPag} · ${total} productos`;
-      elPrev.disabled=paginaActual<=1; elNext.disabled=paginaActual>=totalPag;
+    function cambiarPagina(direccion) {
+      const totalPaginas = Math.ceil(productos.length / productosPorPagina);
+      paginaActual = Math.min(Math.max(1, paginaActual + direccion), totalPaginas);
+      mostrarPagina(productos);
     }
 
-    function renderCart(){
-      elCartList.innerHTML='';
-      if(cart.length===0){
-        elCartEmpty.style.display='block';
-        elCartList.style.display='none';
-        elCartTotal.textContent='$0.00';
-        return;
-      }
-      elCartEmpty.style.display='none';
-      elCartList.style.display='block';
-      
-      let sum=0;
-      cart.forEach((item,idx)=>{
-        const n = Number(String(item.precio).replace(/[^0-9.\-]/g,''));
-        if(!isNaN(n)) sum+=n;
-        const li=document.createElement('li'); li.className='cart-item';
-        const left=document.createElement('div');
-        left.innerHTML = `<div class="cart-item-title">${item.nombre}</div>
-                          <div class="cart-item-meta">${item.marca ? 'Marca: '+item.marca+' · ' : ''}${item.categoria||''}</div>`;
-        const btn=document.createElement('button'); btn.className='cart-btn remove'; btn.textContent='Quitar';
-        btn.addEventListener('click',()=>{ cart.splice(idx,1); saveCart(); renderCart(); });
-        li.appendChild(left); li.appendChild(btn);
-        elCartList.appendChild(li);
-      });
-      elCartTotal.textContent = '$'+sum.toFixed(2);
-    }
-
-    function applyFilters(){
-      const q=elBusqueda.value.trim().toLowerCase();
-      const cat=elCategoria.value;
-      filtrados = productos.filter(p=>{
-        const matchCat = !cat || (p.categoria && p.categoria===cat);
-        if(!q) return matchCat;
-        
-        // Búsqueda mejorada: busca en palabras separadas
-        const queryWords = q.split(' ').filter(Boolean);
-        const campos = [p.nombre,p.marca,p.categoria,p.subcategoria,p.descripcion,p.beneficios]
-          .map(v=>String(v||'').toLowerCase());
-        const textoProducto = campos.join(' ');
-        
-        const matchQ = queryWords.every(word => textoProducto.includes(word));
-        return matchCat && matchQ;
-      });
-      paginaActual=1; render(filtrados);
-    }
-
-    function debounce(fn,wait=200){let t=null; return (...a)=>{clearTimeout(t); t=setTimeout(()=>fn(...a),wait);};}
-
-    async function cargar(){
-      try{
-        elEstado.textContent='Cargando productos...';
-        const res=await fetch(SHEET_CSV_URL,{cache:'no-store'});
-        if(!res.ok) throw new Error('No se pudo cargar el CSV.');
-        const text=await res.text();
-        const rows=parseCSV(text);
-        if(!rows.length) throw new Error('CSV vacío.');
-
-        const headers=rows[0];
-        const idxMap={}; headers.forEach((h,i)=>{ idxMap[norm(h)]=i; });
-
-        // Comprobación (consola) por si falta alguna columna esperada
-        const missing=expected.filter(k=>!(k in idxMap));
-        if(missing.length){ console.warn('Columnas no encontradas:', missing); }
-
-        productos = rows.slice(1).map(r=>{
-          const get = name => r[idxMap[name]] ?? '';
-          return {
-            nombre:get('nombre'),
-            marca:get('marca'),
-            categoria:get('categoria'),
-            subcategoria:get('subcategoria'),
-            descripcion:get('descripcion'),
-            beneficios:get('beneficios'),
-            precioUsd:get('precio usd'),
-            imagenUrl:get('imagen url')
-          };
-        }).filter(p => p.nombre); // Filtra filas vacías
-
-        // Poblar categorías únicas
-        const cats = Array.from(new Set(productos.map(p=>p.categoria).filter(Boolean))).sort();
-        elCategoria.innerHTML = '<option value="">Todas las categorías</option>' +
-          cats.map(c=>`<option value="${c}">${c}</option>`).join('');
-
-        filtrados=productos.slice();
-        elEstado.style.display='none';
-        render(filtrados);
-
-        // Eventos
-        elBusqueda.addEventListener('input',debounce(applyFilters,250)); // Un poco más de tiempo para escribir
-        elCategoria.addEventListener('change',applyFilters);
-        elPageSize.addEventListener('change',()=>{ porPagina=Number(elPageSize.value)||12; paginaActual=1; render(filtrados); });
-        elPrev.addEventListener('click',()=>{ paginaActual=Math.max(1,paginaActual-1); render(filtrados); });
-        elNext.addEventListener('click',()=>{ const tp=Math.ceil(filtrados.length/porPagina); paginaActual=Math.min(tp,paginaActual+1); render(filtrados); });
-
-        // Carrito
-        loadCart();
-        elClearCart.addEventListener('click',()=>{ cart=[]; saveCart(); renderCart(); });
-        elCheckout.addEventListener('click',()=>{
-          if(cart.length===0) {
-            alert('Tu carrito está vacío.');
-            return;
-          }
-          let msg = 'Hola, quiero comprar:\n\n';
-          let sum = 0;
-          cart.forEach((it,idx)=>{
-            const precioNum = Number(String(it.precio).replace(/[^0-9.\-]/g,''));
-            const precio = !isNaN(precioNum) ? money(precioNum) : '';
-            if(!isNaN(precioNum)) sum += precioNum;
-            msg += `${idx+1}. ${it.nombre}${it.marca?` (Marca: ${it.marca})`:''}${precio?` - ${precio}`:''}\n`;
-          });
-          msg += `\n
+    function filtrar() {
+      const q = document.getElementById
