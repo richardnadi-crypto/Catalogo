@@ -4,37 +4,89 @@
   <meta charset="UTF-8">
   <title>Catálogo Naturalisima</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    .producto { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
-    .producto strong { font-size: 1.2em; }
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
+    h1 { text-align: center; color: #2c3e50; }
+    #busqueda { margin: 20px auto; display: block; width: 60%; padding: 10px; }
+    .producto { 
+      border: 1px solid #ccc; 
+      border-radius: 6px; 
+      padding: 10px; 
+      margin: 10px; 
+      background: #fff; 
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      width: 250px;
+    }
+    .grid { display: flex; flex-wrap: wrap; justify-content: center; }
+    .producto strong { font-size: 1.1em; color: #27ae60; }
+    .paginacion { text-align: center; margin-top: 20px; }
+    .paginacion button { margin: 0 5px; padding: 8px 12px; }
   </style>
 </head>
 <body>
   <h1>Catálogo Naturalisima</h1>
-  <div id="catalogo"></div>
+  <input id="busqueda" type="text" placeholder="Buscar producto por nombre, marca o categoría...">
+  <div id="catalogo" class="grid"></div>
+  <div class="paginacion">
+    <button id="prev">Anterior</button>
+    <span id="pagina"></span>
+    <button id="next">Siguiente</button>
+  </div>
 
   <script>
-    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8d5wwRUWXBNcyzAuL0HyrWtMPMjGK-SZH4rBNgIPQpHopFpYkU-g2VHSOwxrulKG-1WoU_mruEF7T/pub?output=csv&gid=272677879';
+    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8d5wwRUWXBNcyzAuL0HyrWtMPMjGK-SZH4rBNgIPQpHopFpYkU-g2VHSOwxrulKG-1WoU_mruEF7T/pub?gid=272677879&single=true&output=csv';
+
+    let productos = [];
+    let paginaActual = 1;
+    const productosPorPagina = 10;
 
     async function cargarProductos() {
       const res = await fetch(SHEET_CSV_URL);
       const texto = await res.text();
       const lineas = texto.trim().split('\n');
-      const encabezados = lineas[0].split(',');
-      const contenedor = document.getElementById('catalogo');
+      productos = lineas.slice(1).map(l => l.split(','));
 
-      for (let i = 1; i < lineas.length; i++) {
-        const campos = lineas[i].split(',');
+      mostrarPagina();
+      document.getElementById('busqueda').addEventListener('input', filtrar);
+      document.getElementById('prev').addEventListener('click', () => cambiarPagina(-1));
+      document.getElementById('next').addEventListener('click', () => cambiarPagina(1));
+    }
+
+    function mostrarPagina(lista = productos) {
+      const contenedor = document.getElementById('catalogo');
+      contenedor.innerHTML = '';
+      const inicio = (paginaActual - 1) * productosPorPagina;
+      const fin = inicio + productosPorPagina;
+      const paginaProductos = lista.slice(inicio, fin);
+
+      paginaProductos.forEach(campos => {
         const producto = document.createElement('div');
         producto.className = 'producto';
         producto.innerHTML = `
           <strong>${campos[0]}</strong><br>
           Marca: ${campos[1]}<br>
           Categoría: ${campos[2]}<br>
-          Precio: $${campos[5]}
+          Subcategoría: ${campos[3]}<br>
+          Descripción: ${campos[4]}
         `;
         contenedor.appendChild(producto);
-      }
+      });
+
+      document.getElementById('pagina').textContent = `Página ${paginaActual} de ${Math.ceil(lista.length / productosPorPagina)}`;
+    }
+
+    function cambiarPagina(direccion) {
+      const totalPaginas = Math.ceil(productos.length / productosPorPagina);
+      paginaActual = Math.min(Math.max(1, paginaActual + direccion), totalPaginas);
+      mostrarPagina();
+    }
+
+    function filtrar() {
+      const q = document.getElementById('busqueda').value.toLowerCase();
+      const filtrados = productos.filter(campos =>
+        campos.some(c => c.toLowerCase().includes(q))
+      );
+      paginaActual = 1;
+      mostrarPagina(filtrados);
     }
 
     cargarProductos();
