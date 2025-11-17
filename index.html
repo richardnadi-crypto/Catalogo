@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Catálogo Naturalisima</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .producto { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+    .producto strong { font-size: 1.2em; }
+  </style>
+</head>
+<body>
+  <h1>Catálogo Naturalisima</h1>
+  <div id="catalogo"></div>
+
+  <script>
+    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8d5wwRUWXBNcyzAuL0HyrWtMPMjGK-SZH4rBNgIPQpHopFpYkU-g2VHSOwxrulKG-1WoU_mruEF7T/pub?output=csv&gid=272677879';
+
+    async function cargarProductos() {
+      const res = await fetch(SHEET_CSV_URL);
+      const texto = await res.text();
+      const lineas = texto.trim().split('\n');
+      const encabezados = lineas[0].split(',');
+      const contenedor = document.getElementById('catalogo');
+
+      for (let i = 1; i < lineas.length; i++) {
+        const campos = lineas[i].split(',');
+        const producto = document.createElement('div');
+        producto.className = 'producto';
+        producto.innerHTML = `
+          <strong>${campos[0]}</strong><br>
+          Marca: ${campos[1]}<br>
+          Categoría: ${campos[2]}<br>
+          Precio: $${campos[5]}
+        `;
+        contenedor.appendChild(producto);
+      }
+    }
+
+    cargarProductos();
+  </script>
+</body>
+</html>
