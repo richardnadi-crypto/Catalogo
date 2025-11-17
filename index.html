@@ -3,23 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <title>Catálogo Naturalisima</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
-    h1 { text-align: center; color: #2c3e50; }
-    #busqueda { margin: 20px auto; display: block; width: 60%; padding: 10px; }
-    .producto { 
-      border: 1px solid #ccc; 
-      border-radius: 6px; 
-      padding: 10px; 
-      margin: 10px; 
-      background: #fff; 
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      width: 250px;
+    body { font-family: Arial, sans-serif; margin:0; padding:20px; background:#f5fbf4; }
+    h1 { text-align:center; color:#2e7d32; }
+    #busqueda { margin:20px auto; display:block; width:80%; padding:10px; border:1px solid #ccc; border-radius:6px; }
+    .grid { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; }
+    .producto {
+      background:#fff; border:1px solid #ddd; border-radius:8px;
+      width:260px; padding:12px; box-shadow:0 4px 10px rgba(0,0,0,0.08);
+      display:flex; flex-direction:column; justify-content:space-between;
     }
-    .grid { display: flex; flex-wrap: wrap; justify-content: center; }
-    .producto strong { font-size: 1.1em; color: #27ae60; }
-    .paginacion { text-align: center; margin-top: 20px; }
-    .paginacion button { margin: 0 5px; padding: 8px 12px; }
+    .producto img { width:100%; height:160px; object-fit:cover; border-radius:6px; margin-bottom:8px; }
+    .producto strong { font-size:1.1em; color:#2e7d32; }
+    .precio { color:#e74c3c; font-weight:bold; margin-top:6px; }
+    .btn { margin-top:10px; padding:8px; background:#27ae60; color:#fff; border:none; border-radius:6px; cursor:pointer; font-weight:bold; }
+    .btn:hover { background:#219150; }
+    .paginacion { text-align:center; margin-top:20px; }
+    .paginacion button { margin:0 5px; padding:8px 12px; border-radius:6px; border:1px solid #ccc; cursor:pointer; }
+    .paginacion button:disabled { opacity:0.5; cursor:not-allowed; }
   </style>
 </head>
 <body>
@@ -34,24 +36,24 @@
 
   <script>
     const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8d5wwRUWXBNcyzAuL0HyrWtMPMjGK-SZH4rBNgIPQpHopFpYkU-g2VHSOwxrulKG-1WoU_mruEF7T/pub?gid=272677879&single=true&output=csv';
+    const WHATSAPP = 'https://wa.me/584143572264?text=';
 
     let productos = [];
     let paginaActual = 1;
-    const productosPorPagina = 10;
+    const productosPorPagina = 12;
 
     async function cargarProductos() {
       const res = await fetch(SHEET_CSV_URL);
       const texto = await res.text();
       const lineas = texto.trim().split('\n');
       productos = lineas.slice(1).map(l => l.split(','));
-
-      mostrarPagina();
+      mostrarPagina(productos);
       document.getElementById('busqueda').addEventListener('input', filtrar);
       document.getElementById('prev').addEventListener('click', () => cambiarPagina(-1));
       document.getElementById('next').addEventListener('click', () => cambiarPagina(1));
     }
 
-    function mostrarPagina(lista = productos) {
+    function mostrarPagina(lista) {
       const contenedor = document.getElementById('catalogo');
       contenedor.innerHTML = '';
       const inicio = (paginaActual - 1) * productosPorPagina;
@@ -61,13 +63,22 @@
       paginaProductos.forEach(campos => {
         const producto = document.createElement('div');
         producto.className = 'producto';
+        const imgUrl = campos[7] || '';
         producto.innerHTML = `
-          <strong>${campos[0]}</strong><br>
+          <img src="${imgUrl}" alt="${campos[0]}">
+          <strong>${campos[0]}</strong>
           Marca: ${campos[1]}<br>
           Categoría: ${campos[2]}<br>
           Subcategoría: ${campos[3]}<br>
-          Descripción: ${campos[4]}
+          Descripción: ${campos[4]}<br>
+          Beneficios: ${campos[5]}<br>
+          <div class="precio">Precio: $${campos[6]}</div>
+          <button class="btn">Agregar al carrito</button>
         `;
+        producto.querySelector('.btn').addEventListener('click', () => {
+          const mensaje = encodeURIComponent(`Hola, quiero comprar: ${campos[0]} (Marca: ${campos[1]}, Precio: $${campos[6]})`);
+          window.open(WHATSAPP + mensaje, '_blank');
+        });
         contenedor.appendChild(producto);
       });
 
@@ -77,7 +88,7 @@
     function cambiarPagina(direccion) {
       const totalPaginas = Math.ceil(productos.length / productosPorPagina);
       paginaActual = Math.min(Math.max(1, paginaActual + direccion), totalPaginas);
-      mostrarPagina();
+      mostrarPagina(productos);
     }
 
     function filtrar() {
