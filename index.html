@@ -8,6 +8,7 @@
     :root{
       --bg:#f5fbf4; --primary:#2e7d32; --primary-dark:#205824; --accent:#27ae60;
       --text:#2c3e50; --muted:#6b7a8c; --card:#fff; --border:#dfe6e9; --danger:#e74c3c;
+      --warn:#c27c1a;
     }
     *{box-sizing:border-box}
     body{
@@ -18,29 +19,21 @@
         repeating-linear-gradient(180deg,rgba(46,125,50,.07) 0px,rgba(46,125,50,.07) 2px,rgba(46,125,50,.03) 4px,rgba(46,125,50,.03) 6px);
       background-attachment:fixed;
     }
-    header{
-      background:linear-gradient(90deg,var(--primary) 0%,var(--primary-dark) 100%);
-      color:#fff; padding:16px; box-shadow:0 4px 16px rgba(0,0,0,.12); position:sticky; top:0; z-index:10;
-    }
+    header{background:linear-gradient(90deg,var(--primary) 0%,var(--primary-dark) 100%); color:#fff; padding:16px; box-shadow:0 4px 16px rgba(0,0,0,.12); position:sticky; top:0; z-index:10;}
     .brand{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:12px; padding:0 8px;}
     .brand h1{margin:0;font-size:1.25rem;letter-spacing:.3px}
     main{max-width:1200px;margin:24px auto; padding:0 16px 40px}
     .controls{display:grid;grid-template-columns:1fr 200px 160px;gap:12px;margin-bottom:16px}
     @media(max-width:840px){.controls{grid-template-columns:1fr}}
-    .controls input,.controls select{
-      padding:10px 12px; border:1px solid var(--border); border-radius:8px; outline:none; background:#fff;
-      box-shadow:0 2px 8px rgba(0,0,0,.06)
-    }
+    .controls input,.controls select{padding:10px 12px; border:1px solid var(--border); border-radius:8px; outline:none; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,.06)}
     .layout{display:grid;grid-template-columns:1fr 340px;gap:16px}
     @media(max-width:1080px){.layout{grid-template-columns:1fr}}
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
-    .card{
-      background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden;
-      box-shadow:0 6px 18px rgba(0,0,0,.08); display:flex; flex-direction:column; transition:transform .14s, box-shadow .14s;
-    }
+    .card{background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; box-shadow:0 6px 18px rgba(0,0,0,.08); display:flex; flex-direction:column; transition:transform .14s, box-shadow .14s;}
     .card:hover{transform:translateY(-2px); box-shadow:0 10px 24px rgba(0,0,0,.12)}
-    .thumb{width:100%; aspect-ratio:4/3; background:#eef7ee; display:grid; place-items:center; overflow:hidden}
+    .thumb{width:100%; aspect-ratio:4/3; background:#eef7ee; display:grid; place-items:center; overflow:hidden; position:relative}
     .thumb img{width:100%; height:100%; object-fit:cover; display:block}
+    .badge-missing{position:absolute; top:8px; left:8px; background:rgba(194,124,26,.9); color:#fff; font-weight:700; font-size:.75rem; padding:4px 6px; border-radius:6px;}
     .content{padding:12px 14px 14px; display:grid; gap:6px}
     .title{font-weight:700; color:var(--primary-dark); font-size:1.02rem; line-height:1.25}
     .meta{color:var(--muted); font-size:.92rem}
@@ -48,23 +41,14 @@
     .price{margin-top:6px; display:flex; align-items:center; justify-content:space-between; gap:8px}
     .usd{color:var(--danger); font-weight:800; font-size:1.05rem}
     .actions{display:flex; gap:8px; margin-top:6px}
-    .btn{
-      flex:1; padding:8px 10px; border-radius:8px; border:1px solid var(--border);
-      background:#f7fcf7; color:var(--primary-dark); font-weight:600; cursor:pointer
-    }
+    .btn{flex:1; padding:8px 10px; border-radius:8px; border:1px solid var(--border); background:#f7fcf7; color:var(--primary-dark); font-weight:600; cursor:pointer}
     .btn:hover{background:#eaf6ea}
     .status{text-align:center; color:var(--muted); padding:20px 8px}
     .paginacion{display:flex; align-items:center; justify-content:center; gap:8px; margin-top:18px}
-    .paginacion button{
-      padding:8px 12px; border-radius:8px; border:1px solid var(--border); background:#fff; cursor:pointer; font-weight:600
-    }
+    .paginacion button{padding:8px 12px; border-radius:8px; border:1px solid var(--border); background:#fff; cursor:pointer; font-weight:600}
     .paginacion button:disabled{opacity:.45; cursor:not-allowed}
     .pageinfo{color:var(--muted); font-weight:600}
-    /* Carrito */
-    .cart{
-      background:#fff; border:1px solid var(--border); border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,.08);
-      padding:14px; position:sticky; top:88px; align-self:start; display:grid; gap:10px
-    }
+    .cart{background:#fff; border:1px solid var(--border); border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,.08); padding:14px; position:sticky; top:88px; align-self:start; display:grid; gap:10px}
     .cart h2{margin:0; font-size:1.05rem; color:var(--primary-dark)}
     .cart-empty{color:var(--muted); font-size:.92rem}
     .cart-list{list-style:none; margin:0; padding:0; display:grid; gap:8px; max-height:420px; overflow:auto}
@@ -127,10 +111,10 @@
   <script>
     // URL CSV definitivo
     const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8d5wwRUWXBNcyzAuL0HyrWtMPMjGK-SZH4rBNgIPQpHopFpYkU-g2VHSOwxrulKG-1WoU_mruEF7T/pub?gid=272677879&single=true&output=csv';
-    // WhatsApp destino (Venezuela)
+    // WhatsApp (Venezuela)
     const WHATSAPP_BASE = 'https://wa.me/584143572264?text=';
 
-    // Parseador CSV robusto (respeta comillas y comas dentro de campos)
+    // Parseador CSV robusto
     function parseCSV(text){
       const rows=[]; let cur=[]; let val=''; let inQ=false;
       for(let i=0;i<text.length;i++){
@@ -159,9 +143,13 @@
         .replace(/\s+/g,' ');
     }
 
-    const expected = [
-      'nombre','marca','categoria','subcategoria','descripcion','beneficios','precio usd','imagen url'
-    ];
+    // Orden esperado de columnas por posición (respaldo)
+    const posOrder = {
+      'nombre':0,'marca':1,'categoria':2,'subcategoria':3,
+      'descripcion':4,'beneficios':5,'precio usd':6,'imagen url':7
+    };
+
+    const expected = Object.keys(posOrder);
 
     let productos=[]; let filtrados=[];
     let paginaActual=1; let porPagina=12;
@@ -206,6 +194,7 @@
       const img=document.createElement('img'); img.loading='lazy';
       img.alt=p.nombre?`Imagen de ${p.nombre}`:'Imagen de producto';
       img.src=p.imagenUrl||PLACEHOLDER; thumb.appendChild(img);
+      if(!p.imagenUrl){ const badge=document.createElement('div'); badge.className='badge-missing'; badge.textContent='Falta imagen'; thumb.appendChild(badge); }
 
       const content=document.createElement('div'); content.className='content';
       const title=document.createElement('div'); title.className='title'; title.textContent=p.nombre||'Producto';
@@ -314,13 +303,22 @@
 
         const headers=rows[0];
         const idxMap={}; headers.forEach((h,i)=>{ idxMap[norm(h)]=i; });
+        console.log('Encabezados detectados:', headers.map(h=>norm(h)));
 
-        // Comprobación (consola) por si falta alguna columna esperada
+        // Aviso si faltan columnas esperadas
         const missing=expected.filter(k=>!(k in idxMap));
-        if(missing.length){ console.warn('Columnas no encontradas:', missing); }
+        if(missing.length){ console.warn('Columnas no encontradas por nombre, se usarán posiciones por defecto donde aplique:', missing); }
 
         productos = rows.slice(1).map(r=>{
-          const get = name => r[idxMap[name]] ?? '';
+          function get(name){
+            if(name in idxMap){
+              const i = idxMap[name];
+              return r[i] ?? '';
+            }else{
+              const pos = posOrder[name];
+              return (typeof pos==='number' && pos < r.length) ? (r[pos] ?? '') : '';
+            }
+          }
           return {
             nombre:get('nombre'),
             marca:get('marca'),
@@ -372,57 +370,6 @@
     }
 
     cargar();
-  </script>
-</body>
-</html>
-    function mostrarPagina(lista) {
-      const contenedor = document.getElementById('catalogo');
-      contenedor.innerHTML = '';
-      const inicio = (paginaActual - 1) * productosPorPagina;
-      const fin = inicio + productosPorPagina;
-      const paginaProductos = lista.slice(inicio, fin);
-
-      paginaProductos.forEach(campos => {
-        const producto = document.createElement('div');
-        producto.className = 'producto';
-        const imgUrl = campos[7] || '';
-        producto.innerHTML = `
-          <img src="${imgUrl}" alt="${campos[0]}">
-          <strong>${campos[0]}</strong>
-          Marca: ${campos[1]}<br>
-          Categoría: ${campos[2]}<br>
-          Subcategoría: ${campos[3]}<br>
-          Descripción: ${campos[4]}<br>
-          Beneficios: ${campos[5]}<br>
-          <div class="precio">Precio: $${campos[6]}</div>
-          <button class="btn">Agregar al carrito</button>
-        `;
-        producto.querySelector('.btn').addEventListener('click', () => {
-          const mensaje = encodeURIComponent(`Hola, quiero comprar: ${campos[0]} (Marca: ${campos[1]}, Precio: $${campos[6]})`);
-          window.open(WHATSAPP + mensaje, '_blank');
-        });
-        contenedor.appendChild(producto);
-      });
-
-      document.getElementById('pagina').textContent = `Página ${paginaActual} de ${Math.ceil(lista.length / productosPorPagina)}`;
-    }
-
-    function cambiarPagina(direccion) {
-      const totalPaginas = Math.ceil(productos.length / productosPorPagina);
-      paginaActual = Math.min(Math.max(1, paginaActual + direccion), totalPaginas);
-      mostrarPagina(productos);
-    }
-
-    function filtrar() {
-      const q = document.getElementById('busqueda').value.toLowerCase();
-      const filtrados = productos.filter(campos =>
-        campos.some(c => c.toLowerCase().includes(q))
-      );
-      paginaActual = 1;
-      mostrarPagina(filtrados);
-    }
-
-    cargarProductos();
   </script>
 </body>
 </html>
